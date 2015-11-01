@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Chat RPG</title>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="author" content="wertrain">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // 1.イベントとコールバックの定義
+        var socketio = io.connect('http://localhost:8080');
+
+        socketio.on("connected", function(name) {});
+        socketio.on("publish", function (data) { addMessage(data.value); });
+        socketio.on("disconnect", function () {});
+        
+        socketio.emit("connected", "test");
+    </script>
+  </body>
+</html>
