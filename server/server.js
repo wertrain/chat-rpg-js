@@ -1,20 +1,21 @@
-// 1.モジュールオブジェクトの初期化
-var fs = require("fs");
-var server = require("http").createServer(function(req, res) {
-     res.writeHead(200, {"Content-Type":"text/html"});
-     var output = fs.readFileSync("./client/index.html", "utf-8");
-     res.end(output);
-}).listen(8080);
-var io = require("socket.io").listen(server);
+(function() {
+    var express = require('express');
+    var app = express();
+    app.use(express.static(__dirname + '/build'));
 
-// 2.イベントの定義
-io.sockets.on("connection", function (socket) {
+    var http = require('http');
+    var server = http.createServer(app);
+    var io = require('socket.io').listen(server);
 
-    // 接続開始カスタムイベント(接続元ユーザを保存し、他ユーザへ通知)
-    socket.on("connected", function (name) {
-        var msg = name + "が入室しました";
-        console.log(msg);
-        //io.sockets.emit("publish", {value: msg});
+    io.sockets.on('connection', function (socket) {
+      
+        socket.on('connected', function (name) {
+            var msg = name + 'が入室しました';
+            console.log(msg);
+            //io.sockets.emit('publish', {value: msg});
+        });
+
     });
-
-});
+    
+    server.listen(8080);
+})();

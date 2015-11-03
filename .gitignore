@@ -1,2 +1,3 @@
 node_modules/
 client/libs/enchantjs/*.js
+server/build
