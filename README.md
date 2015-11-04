@@ -10,9 +10,9 @@
 
 ## Build
 
-Put to download [enchant.js](http://enchantjs.com/).
+[enchant.js](http://enchantjs.com/) download and then put it in this directory.
 
-     chat-rpg-js/client/libs/enchantjs/enchant.js
+* chat-rpg-js/client/libs/enchantjs/enchant.js
 
 Install plugins
 
