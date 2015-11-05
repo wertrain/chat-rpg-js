@@ -7,9 +7,16 @@
     var server = http.createServer(app);
     var io = require('socket.io').listen(server);
 
+    var players = [];
     io.sockets.on('connection', function (socket) {
       
         socket.on('connected', function (name) {
+            var player = {
+                name: name,
+            };
+            socket.broadcast.emit('connected', player);
+            
+            players[socket.id] = player;
             var msg = name + 'が入室しました';
             console.log(msg);
             //io.sockets.emit('publish', {value: msg});
