@@ -1,7 +1,6 @@
 var gulp = require("gulp"),
     uglify = require("gulp-uglify"),
-    concat = require("gulp-concat"),
-    rename = require('gulp-rename');
+    concat = require("gulp-concat");
 
 gulp.task('copy', function() {
     gulp.src('client/*.html').pipe(gulp.dest('server/build'));
