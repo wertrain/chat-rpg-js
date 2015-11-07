@@ -1,3 +1,7 @@
+/**
+ * @fileoverview サーバ側の実装。
+ */
+
 (function() {
     var express = require('express');
     var app = express();

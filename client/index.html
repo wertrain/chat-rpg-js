@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Chat RPG</title>
+    <title>RPG Like Chat</title>
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="author" content="wertrain">
@@ -18,15 +18,5 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/vender.js"></script>
     <script src="js/app.js"></script>
-    <script>
-        var socketio = io.connect('http://localhost:8080');
-        socketio.on("connected", function(player) {
-            console.log(player.name);
-        });
-        socketio.on("publish", function (data) { addMessage(data.value); });
-        socketio.on("disconnect", function () {});
-        
-        socketio.emit("connected", "aaa");
-    </script>
   </body>
 </html>
