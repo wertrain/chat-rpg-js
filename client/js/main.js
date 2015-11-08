@@ -1,5 +1,7 @@
-window.onload = function() {
-
+/**
+ * @fileoverview ゲームメイン部分。
+ */
+ window.onload = function() {
     var game = new enchant.Game(320, 320);
     game.fps = 15;
     

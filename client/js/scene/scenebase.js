@@ -1,9 +1,7 @@
 /**
  * @fileoverview すべてのシーンの基底となるクラスを定義。
  */
-
 (function(namespace) {
-  
     /**
      * すべてのシーンの基底となるクラス
      * @constructor
@@ -22,5 +20,4 @@
     
     var ns = chatrpg.common.addNamespace(namespace);
     ns.SceneBase = SceneBase;
-    
 }("chatrpg.scene"));

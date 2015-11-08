@@ -1,6 +1,6 @@
-var gulp = require("gulp"),
-    uglify = require("gulp-uglify"),
-    concat = require("gulp-concat");
+var gulp = require('gulp'),
+    uglify = require('gulp-uglify'),
+    concat = require('gulp-concat');
 
 gulp.task('copy', function() {
     gulp.src('client/*.html').pipe(gulp.dest('server/build'));
@@ -15,14 +15,18 @@ gulp.task('vender-js', function() {
 });
 
 gulp.task('app-js', function() {
-    return gulp.src('client/js/**/*.js')
-      .pipe(uglify())
+    return gulp.src([
+        'client/js/common/common.js',
+        'client/js/scene/scenebase.js',
+        'client/js/**/*.js'
+      ])
       .pipe(concat('app.js'))
+      .pipe(uglify())
       .pipe(gulp.dest('server/build/js'));
 });
 
 gulp.task('watch', function() {
-    gulp.watch(['client/*.html','client/js/*.js'], ['default']);
+    gulp.watch(['client/*.html','client/js/**/*.js'], ['default']);
 });
 gulp.task('build', ['copy', 'vender-js', 'app-js']);
 

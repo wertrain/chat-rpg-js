@@ -1,15 +1,14 @@
 /**
  * @fileoverview すべてのシーンの基底となるクラスを定義。
  */
-
 (function(namespace) {
-  
     /**
      * ゲームシーン
      * @constructor
      * @extends {chatrpg.scene.SceneBase} 
      */
-    GameScene = enchant.Class.create(chatrpg.scene.SceneBase, {
+    var GameScene = enchant.Class.create(chatrpg.scene.SceneBase, {
+        stage_: null,
         initialize: function() {
             chatrpg.scene.SceneBase.call(this);
             var game = enchant.Game.instance;
@@ -147,21 +146,22 @@
                 [ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
             ]);
 
-            var player = new Sprite(32, 32);
+            var player = new enchant.Sprite(32, 32);
             player.x = 6 * 16 - 8;
             player.y = 10 * 16;
-            var image = new Surface(96, 128);
-            image.draw(game.assets['images/chara0.gif'], 0, 0, 96, 128, 0, 0, 96, 128);
+            var image = new enchant.Surface(96, 128);
+            image.draw(game.assets[R.CHARA_0], 0, 0, 96, 128, 0, 0, 96, 128);
             player.image = image;
 
             player.isMoving = false;
             player.direction = 0;
             player.walk = 1;
-            player.addEventListener('enterframe', function() {
+            
+            player.addEventListener(enchant.Event.ENTER_FRAME, function() {
                 this.frame = this.direction * 3 + this.walk;
                 if (this.isMoving) {
                     this.moveBy(this.vx, this.vy);
-     
+                    
                     if (!(game.frame % 3)) {
                         this.walk++;
                         this.walk %= 3;
@@ -196,18 +196,13 @@
                 }
             });
             
-            var stage = new Group();
+            var stage = new enchant.Group();
             stage.addChild(map);
             stage.addChild(player);
             stage.addChild(foregroundMap);
-            game.rootScene.addChild(stage);
+            this.getEnchantScene().addChild(stage);
 
-            //var pad = new Pad();
-            //pad.x = 0;
-            //pad.y = 220;
-            //game.rootScene.addChild(pad);
-
-            game.rootScene.addEventListener('enterframe', function(e) {
+            this.getEnchantScene().addEventListener(enchant.Event.ENTER_FRAME, function(e) {
                 var x = Math.min((game.width  - 16) / 2 - player.x, 0);
                 var y = Math.min((game.height - 16) / 2 - player.y, 0);
                 x = Math.max(game.width,  x + map.width)  - map.width;
@@ -227,5 +222,8 @@
         MAP:     "images/map1.gif",
         CHARA_0: "images/chara0.gif"
     };
+    
+    var ns = chatrpg.common.addNamespace(namespace);
+    ns.GameScene = GameScene;
 
 }("chatrpg.scene"));

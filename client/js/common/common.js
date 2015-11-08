@@ -1,9 +1,7 @@
 /**
  * @fileoverview 共通定義など。
  */
-
 (function(global, namespace) {
-  
     /**
      * ドットで区切られた文字列を展開し、グローバル領域に定義していきます。
      * @param {string} str 名前空間用の文字列。
@@ -35,7 +33,6 @@
     }
     
     var ns = addNamespace(namespace);
-    ns.Namespace = addNamespace;
+    ns.addNamespace = addNamespace;
     ns.addResourceArray = addResourceArray;
-
 }(this, "chatrpg.common"));
