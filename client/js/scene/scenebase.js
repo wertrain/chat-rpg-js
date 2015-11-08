@@ -9,6 +9,7 @@
     var SceneBase = enchant.Class.create({
         initialize: function() {
             this.scene = new enchant.Scene();
+            //this.scene.backgroundColor = "#99FF99";
         },
         getEnchantScene: function() {
             return this.scene;

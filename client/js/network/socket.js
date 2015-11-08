@@ -5,15 +5,35 @@
     //var port = 8080;
     //var socketio = io.connect('/', { port: port });
     var socketio = io.connect('http://localhost:8080');
-    
-    // 起動時に名前を送信
-    socketio.emit('connected', 'テスト');
+    var loginName = '';
+    var messageCallback = function(name, message) {};
     
     socketio.on('connected', function(player) {
         console.log(player.name);
     });
+    socketio.on('message', function(message) {
+        var messages = message.split(":");
+        messageCallback(messages[0], messages[1]);
+    });
     socketio.on('disconnect', function () {});
     
+    var login = function(name) {
+        loginName = name;
+        socketio.emit('connected', name);
+    }
+    var getLoginName = function() {
+        return loginName;
+    }
+    var talk = function(message) {
+        socketio.emit('message', loginName + ':' + message);
+    }
+    var setMessageCallback = function(callback) {
+        messageCallback = callback;
+    }
+    
     var ns = chatrpg.common.addNamespace(namespace);
-    ns.SocketIO = socketio;
+    ns.login = login;
+    ns.talk = talk;
+    ns.getLoginName = getLoginName;
+    ns.setMessageCallback = setMessageCallback;
 }('chatrpg.network'));

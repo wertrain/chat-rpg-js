@@ -4,7 +4,8 @@ var gulp = require('gulp'),
 
 gulp.task('copy', function() {
     gulp.src('client/*.html').pipe(gulp.dest('server/build'));
-    gulp.src('client/images/**').pipe(gulp.dest('server/build/images'));
+    gulp.src('client/images/*.*').pipe(gulp.dest('server/build/images'));
+    gulp.src('client/images/enchantjsui/**').pipe(gulp.dest('server/build'));
 });
 
 gulp.task('vender-js', function() {
@@ -21,7 +22,7 @@ gulp.task('app-js', function() {
         'client/js/**/*.js'
       ])
       .pipe(concat('app.js'))
-      .pipe(uglify())
+      //.pipe(uglify())
       .pipe(gulp.dest('server/build/js'));
 });
 

@@ -25,6 +25,12 @@
             console.log(msg);
             //io.sockets.emit('publish', {value: msg});
         });
+        
+        socket.on('message', function (message) {
+            socket.broadcast.emit('message', message);
+            socket.emit('message', message);
+            console.log(message);
+        });
 
     });
     

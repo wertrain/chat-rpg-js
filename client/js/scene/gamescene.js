@@ -1,5 +1,5 @@
 /**
- * @fileoverview すべてのシーンの基底となるクラスを定義。
+ * @fileoverview タイトルシーンクラスの定義。
  */
 (function(namespace) {
     /**
@@ -8,7 +8,6 @@
      * @extends {chatrpg.scene.SceneBase} 
      */
     var GameScene = enchant.Class.create(chatrpg.scene.SceneBase, {
-        stage_: null,
         initialize: function() {
             chatrpg.scene.SceneBase.call(this);
             var game = enchant.Game.instance;
@@ -157,10 +156,22 @@
             player.direction = 0;
             player.walk = 1;
             
+            var nameLabel = new enchant.Label();
+            nameLabel.font  = "10px 'Consolas', 'Monaco', 'メイリオ'";
+            nameLabel.text = chatrpg.network.getLoginName();
+            nameLabel.setPos = function(x, y) {
+                nameLabel.x = x  - (nameLabel._boundWidth / 2) + 16;
+                nameLabel.y = y - 2;
+            };
+            nameLabel.setPos(player.x, player.y);
+            
+            player.nameLabel = nameLabel;
+            
             player.addEventListener(enchant.Event.ENTER_FRAME, function() {
                 this.frame = this.direction * 3 + this.walk;
                 if (this.isMoving) {
                     this.moveBy(this.vx, this.vy);
+                    nameLabel.setPos(this.x, this.y);
                     
                     if (!(game.frame % 3)) {
                         this.walk++;
@@ -196,12 +207,64 @@
                 }
             });
             
+            
             var stage = new enchant.Group();
             stage.addChild(map);
             stage.addChild(player);
+            stage.addChild(nameLabel);
             stage.addChild(foregroundMap);
             this.getEnchantScene().addChild(stage);
 
+            // テキスト入力用のUI を表示させる
+            {
+                var talkInputBox = new enchant.Entity();
+                talkInputBox.x = 16;
+                talkInputBox.y = 280;
+                talkInputBox.width = 380;
+                talkInputBox.height = 16;
+                talkInputBox._element = document.createElement('input');
+                talkInputBox.backgroundColor = 'rgba(255,255,255,255)';
+
+                var logTextBg = new enchant.Label();
+                logTextBg.x = 16;
+                logTextBg.y = 200;
+                logTextBg.width = 430;
+                logTextBg.height = 68;
+                logTextBg.opacity = 0.5;
+                logTextBg.backgroundColor = 'rgba(255,255,255,255)';
+                var logTextarea = new enchant.Entity();
+                logTextarea.x = logTextBg.x;
+                logTextarea.y = logTextBg.y;
+                logTextarea.width = logTextBg.width;
+                logTextarea.height = logTextBg.height;
+                logTextarea._element = document.createElement('textarea');
+                logTextarea._element.setAttribute('readonly','readonly');
+                logTextarea._element.setAttribute('style','resize: none');
+                logTextarea.opacity = 0.5;
+                logTextarea.backgroundColor = 'rgba(255,255,255,255)';
+                chatrpg.network.setMessageCallback(function(name, message) {
+                    logTextarea._element.value += name + ': ' + message + '\n';
+                });
+                
+                var talkButton = new enchant.ui.Button('TALK');
+                talkButton.x = talkInputBox.x + talkInputBox.width + 12;
+                talkButton.y = talkInputBox.y - 2;
+                talkButton.ontouchstart = function(){
+                    var talk = talkInputBox._element.value;
+                    talkInputBox._element.value = '';
+                    //logTextarea._element.value += talk + '\n';
+                    chatrpg.network.talk(talk);
+                }
+                this.getEnchantScene().addChild(talkInputBox);
+                this.getEnchantScene().addChild(talkButton);
+                //this.getEnchantScene().addChild(logTextBg);
+                this.getEnchantScene().addChild(logTextarea);
+                
+                // Chrome (Windows) で表示されない不具合の対策
+                // http://kazenetu.exblog.jp/15572197/
+                this.getEnchantScene()._element.style.overflow = 'visible';
+            }
+            
             this.getEnchantScene().addEventListener(enchant.Event.ENTER_FRAME, function(e) {
                 var x = Math.min((game.width  - 16) / 2 - player.x, 0);
                 var y = Math.min((game.height - 16) / 2 - player.y, 0);
@@ -219,11 +282,11 @@
      * この Resources というプロパティは common.addResourceArray で使用するために予約された名前です。
      */
     var R = GameScene.Resources = {
-        MAP:     "images/map1.gif",
-        CHARA_0: "images/chara0.gif"
+        MAP:     'images/map1.gif',
+        CHARA_0: 'images/chara0.gif'
     };
     
     var ns = chatrpg.common.addNamespace(namespace);
     ns.GameScene = GameScene;
 
-}("chatrpg.scene"));
+}('chatrpg.scene'));

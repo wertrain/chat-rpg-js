@@ -2,7 +2,7 @@
  * @fileoverview ゲームメイン部分。
  */
  window.onload = function() {
-    var game = new enchant.Game(320, 320);
+    var game = new enchant.Game(480, 320);
     game.fps = 15;
     
     var allResources = new Array();
@@ -10,8 +10,10 @@
     game.preload(allResources);
     
     game.onload = function() {
-        var gameScene = new chatrpg.scene.GameScene();
-        game.pushScene(gameScene.getEnchantScene());
+        var titleScene = new chatrpg.scene.TitleScene();
+        game.pushScene(titleScene.getEnchantScene());
+        //var gameScene = new chatrpg.scene.GameScene();
+        //game.pushScene(gameScene.getEnchantScene());
     };
     game.start();
 };
