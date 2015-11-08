@@ -1,4 +1,4 @@
 node_modules/
 client/libs/enchantjs/*.js
-client/libs/enchantjs/plugin/*.js
+client/libs/enchantjs/plugins/*.js
 server/build
