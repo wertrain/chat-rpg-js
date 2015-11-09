@@ -1,7 +1,6 @@
 /**
  * @fileoverview サーバ側の実装。
  */
-
 (function() {
     var express = require('express');
     var app = express();
@@ -13,23 +12,23 @@
 
     var players = [];
     io.sockets.on('connection', function (socket) {
-      
         socket.on('connected', function (name) {
             var player = {
                 name: name,
+                id: socket.id
             };
-            socket.broadcast.emit('connected', player);
+            socket.emit('connected', player);
+            socket.broadcast.emit('join', player);
             
             players[socket.id] = player;
-            var msg = name + 'が入室しました';
+            var msg = name + '(' + socket.id + ')' + 'が入室しました ';
             console.log(msg);
-            //io.sockets.emit('publish', {value: msg});
         });
         
         socket.on('message', function (message) {
             socket.broadcast.emit('message', message);
             socket.emit('message', message);
-            console.log(message);
+            //console.log(message);
         });
 
     });

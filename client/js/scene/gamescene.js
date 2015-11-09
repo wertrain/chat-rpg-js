@@ -158,20 +158,24 @@
             
             var nameLabel = new enchant.Label();
             nameLabel.font  = "10px 'Consolas', 'Monaco', 'メイリオ'";
-            nameLabel.text = chatrpg.network.getLoginName();
+            nameLabel.text = chatrpg.network.getPlayerInfo().name;
             nameLabel.setPos = function(x, y) {
                 nameLabel.x = x  - (nameLabel._boundWidth / 2) + 16;
                 nameLabel.y = y - 2;
             };
             nameLabel.setPos(player.x, player.y);
             
+            var messageLabel = new MessageLabel();
+            
             player.nameLabel = nameLabel;
+            player.messageLabel = messageLabel;
             
             player.addEventListener(enchant.Event.ENTER_FRAME, function() {
                 this.frame = this.direction * 3 + this.walk;
                 if (this.isMoving) {
                     this.moveBy(this.vx, this.vy);
                     nameLabel.setPos(this.x, this.y);
+                    messageLabel.setPos(this.x, this.y);
                     
                     if (!(game.frame % 3)) {
                         this.walk++;
@@ -213,6 +217,7 @@
             stage.addChild(player);
             stage.addChild(nameLabel);
             stage.addChild(foregroundMap);
+            player.messageLabel.addChildTo(stage);
             this.getEnchantScene().addChild(stage);
 
             // テキスト入力用のUI を表示させる
@@ -253,6 +258,7 @@
                     var talk = talkInputBox._element.value;
                     talkInputBox._element.value = '';
                     //logTextarea._element.value += talk + '\n';
+                    player.messageLabel.setText(talk);
                     chatrpg.network.talk(talk);
                 }
                 this.getEnchantScene().addChild(talkInputBox);
@@ -274,6 +280,65 @@
                 stage.y = y;
             });
         },
+    });
+    
+    /**
+     * 発言ラベル
+     * @constructor
+     */
+    MessageLabel = enchant.Class.create({
+        initialize: function() {
+            this.talkText = "";
+            this.talkLabel = new enchant.Label(this.talkText);
+            this.talkLabel.color = 'black';
+            this.image = new enchant.Surface(256, 32);
+            this.bg = new enchant.Sprite(256, 32);
+            this.textWidth = this.talkLabel._boundWidth;
+            this.rectWidth = Math.max(64, this.textWidth * 1.5);
+            
+        },
+        setText: function(text) {
+            this.talkText = text;
+            this.talkLabel.text = this.talkText;
+            this.image = new enchant.Surface(256, 32);
+            this.textWidth = this.talkLabel._boundWidth;
+            this.rectWidth = Math.max(64, this.textWidth * 1.5);
+            this.fillRoundRect_(this.image.context, 0, 0, this.rectWidth, 24, 8);
+            this.bg.image = this.image;
+        },
+        setPos: function(x, y) {
+            this.talkLabel.x = x - this.textWidth / 2;
+            this.talkLabel.y = y - 24;
+            this.bg.x = x + 16 - this.rectWidth / 2;
+            this.bg.y = y - 30;
+        },
+        addChildTo: function(parent) {
+            parent.addChild(this.bg);
+            parent.addChild(this.talkLabel);
+        },
+        removeChildFrom: function(parent) {
+            parent.removeChild(this.bg);
+            parent.removeChild(this.talkLabel);
+        },
+        fillRoundRect_: function(ctx, l, t, w, h, r) {
+            var pi = Math.PI;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.beginPath();
+            ctx.arc(l + r, t + r, r, - pi, - 0.5 * pi, false);
+            ctx.arc(l + w - r, t + r, r, - 0.5 * pi, 0, false);
+            ctx.arc(l + w - r, t + h - r, r, 0, 0.5 * pi, false);
+            ctx.arc(l + r, t + h - r, r, 0.5 * pi, pi, false);
+            ctx.closePath();
+            ctx.fill();
+            /* 三角形を描く */
+            ctx.beginPath();
+            ctx.moveTo((l + w) / 2, t + h + 5);
+            ctx.lineTo((l + w) / 2 + 5, t + h);
+            ctx.lineTo((l + w) / 2 - 5, t + h);
+            ctx.closePath();
+            /* 三角形を塗りつぶす */
+            ctx.fill();
+        }
     });
     
     /**
