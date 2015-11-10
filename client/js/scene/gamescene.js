@@ -217,7 +217,7 @@
             stage.addChild(player);
             stage.addChild(nameLabel);
             stage.addChild(foregroundMap);
-            player.messageLabel.addChildTo(stage);
+            stage.addChild(messageLabel);
             this.getEnchantScene().addChild(stage);
 
             // テキスト入力用のUI を表示させる
@@ -259,6 +259,7 @@
                     talkInputBox._element.value = '';
                     //logTextarea._element.value += talk + '\n';
                     player.messageLabel.setText(talk);
+                    player.messageLabel.setPos(player.x, player.y);
                     chatrpg.network.talk(talk);
                 }
                 this.getEnchantScene().addChild(talkInputBox);
@@ -285,40 +286,33 @@
     /**
      * 発言ラベル
      * @constructor
+     * @extends {enchant.Group} 
      */
-    MessageLabel = enchant.Class.create({
+    MessageLabel = enchant.Class.create(enchant.Group, {
         initialize: function() {
-            this.talkText = "";
+            enchant.Group.call(this);
+            this.textWidth = 0;
+            this.rectWidth = 0;
             this.talkLabel = new enchant.Label(this.talkText);
             this.talkLabel.color = 'black';
-            this.image = new enchant.Surface(256, 32);
-            this.bg = new enchant.Sprite(256, 32);
-            this.textWidth = this.talkLabel._boundWidth;
-            this.rectWidth = Math.max(64, this.textWidth * 1.5);
-            
+            this.bgBalloon = new enchant.Sprite(480, 32);
+            this.bgBalloonImage = new enchant.Surface(480, 32);
+            this.bgBalloon.image = this.bgBalloonImage;
+            this.addChild(this.bgBalloon);
+            this.addChild(this.talkLabel);
         },
         setText: function(text) {
-            this.talkText = text;
-            this.talkLabel.text = this.talkText;
-            this.image = new enchant.Surface(256, 32);
+            this.talkLabel.text = text;
             this.textWidth = this.talkLabel._boundWidth;
             this.rectWidth = Math.max(64, this.textWidth * 1.5);
-            this.fillRoundRect_(this.image.context, 0, 0, this.rectWidth, 24, 8);
-            this.bg.image = this.image;
+            this.bgBalloonImage.clear();
+            this.fillRoundRect_(this.bgBalloonImage.context, 0, 0, this.rectWidth, 24, 8);
         },
         setPos: function(x, y) {
-            this.talkLabel.x = x - this.textWidth / 2;
+            this.talkLabel.x = x + 16 - this.textWidth / 2;
             this.talkLabel.y = y - 24;
-            this.bg.x = x + 16 - this.rectWidth / 2;
-            this.bg.y = y - 30;
-        },
-        addChildTo: function(parent) {
-            parent.addChild(this.bg);
-            parent.addChild(this.talkLabel);
-        },
-        removeChildFrom: function(parent) {
-            parent.removeChild(this.bg);
-            parent.removeChild(this.talkLabel);
+            this.bgBalloon.x = x + 16 - this.rectWidth / 2;
+            this.bgBalloon.y = y - 30;
         },
         fillRoundRect_: function(ctx, l, t, w, h, r) {
             var pi = Math.PI;
