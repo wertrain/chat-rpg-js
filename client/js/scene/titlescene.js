@@ -34,7 +34,7 @@
             var button = new enchant.ui.Button("Login");
             button.x = input.x + input.width + 12;
             button.y = input.y - 2;
-            button.ontouchstart = function(){
+            button.ontouchstart = function() {
                 var name = input._element.value;
                 if (name.length === 0) {
                     name = '名無しさん';

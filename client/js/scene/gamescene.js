@@ -145,79 +145,84 @@
                 [ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
             ]);
 
-            var player = new enchant.Sprite(32, 32);
-            player.x = 6 * 16 - 8;
-            player.y = 10 * 16;
-            var image = new enchant.Surface(96, 128);
-            image.draw(game.assets[R.CHARA_0], 0, 0, 96, 128, 0, 0, 96, 128);
-            player.image = image;
+            // var player = new enchant.Sprite(32, 32);
+            // player.x = 6 * 16 - 8;
+            // player.y = 10 * 16;
+            // var image = new enchant.Surface(96, 128);
+            // image.draw(game.assets[R.CHARA_0], 0, 0, 96, 128, 0, 0, 96, 128);
+            // player.image = image;
 
-            player.isMoving = false;
-            player.direction = 0;
-            player.walk = 1;
+            // player.isMoving = false;
+            // player.direction = 0;
+            // player.walk = 1;
             
-            var nameLabel = new enchant.Label();
-            nameLabel.font  = "10px 'Consolas', 'Monaco', 'メイリオ'";
-            nameLabel.text = chatrpg.network.getPlayerInfo().name;
-            nameLabel.setPos = function(x, y) {
-                nameLabel.x = x  - (nameLabel._boundWidth / 2) + 16;
-                nameLabel.y = y - 2;
-            };
-            nameLabel.setPos(player.x, player.y);
+            // var nameLabel = new enchant.Label();
+            // nameLabel.font  = "10px 'Consolas', 'Monaco', 'メイリオ'";
+            // nameLabel.text = chatrpg.network.getPlayerInfo().name;
+            // nameLabel.setPos = function(x, y) {
+                // nameLabel.x = x  - (nameLabel._boundWidth / 2) + 16;
+                // nameLabel.y = y - 2;
+            // };
+            // nameLabel.setPos(player.x, player.y);
             
-            var messageLabel = new MessageLabel();
+            // var messageLabel = new MessageLabel();
             
-            player.nameLabel = nameLabel;
-            player.messageLabel = messageLabel;
+            // player.nameLabel = nameLabel;
+            // player.messageLabel = messageLabel;
             
-            player.addEventListener(enchant.Event.ENTER_FRAME, function() {
-                this.frame = this.direction * 3 + this.walk;
-                if (this.isMoving) {
-                    this.moveBy(this.vx, this.vy);
-                    nameLabel.setPos(this.x, this.y);
-                    messageLabel.setPos(this.x, this.y);
+            // player.addEventListener(enchant.Event.ENTER_FRAME, function() {
+                // this.frame = this.direction * 3 + this.walk;
+                // if (this.isMoving) {
+                    // this.moveBy(this.vx, this.vy);
+                    // nameLabel.setPos(this.x, this.y);
+                    // messageLabel.setPos(this.x, this.y);
                     
-                    if (!(game.frame % 3)) {
-                        this.walk++;
-                        this.walk %= 3;
-                    }
-                    if ((this.vx && (this.x-8) % 16 == 0) || (this.vy && this.y % 16 == 0)) {
-                        this.isMoving = false;
-                        this.walk = 1;
-                    }
-                } else {
-                    this.vx = this.vy = 0;
-                    if (game.input.left) {
-                        this.direction = 1;
-                        this.vx = -4;
-                    } else if (game.input.right) {
-                        this.direction = 2;
-                        this.vx = 4;
-                    } else if (game.input.up) {
-                        this.direction = 3;
-                        this.vy = -4;
-                    } else if (game.input.down) {
-                        this.direction = 0;
-                        this.vy = 4;
-                    }
-                    if (this.vx || this.vy) {
-                        var x = this.x + (this.vx ? this.vx / Math.abs(this.vx) * 16 : 0) + 16;
-                        var y = this.y + (this.vy ? this.vy / Math.abs(this.vy) * 16 : 0) + 16;
-                        if (0 <= x && x < map.width && 0 <= y && y < map.height && !map.hitTest(x, y)) {
-                            this.isMoving = true;
-                            arguments.callee.call(this);
-                        }
-                    }
-                }
-            });
+                    // if (!(game.frame % 3)) {
+                        // this.walk++;
+                        // this.walk %= 3;
+                    // }
+                    // if ((this.vx && (this.x-8) % 16 == 0) || (this.vy && this.y % 16 == 0)) {
+                        // this.isMoving = false;
+                        // this.walk = 1;
+                    // }
+                // } else {
+                    // this.vx = this.vy = 0;
+                    // if (game.input.left) {
+                        // this.direction = 1;
+                        // this.vx = -4;
+                    // } else if (game.input.right) {
+                        // this.direction = 2;
+                        // this.vx = 4;
+                    // } else if (game.input.up) {
+                        // this.direction = 3;
+                        // this.vy = -4;
+                    // } else if (game.input.down) {
+                        // this.direction = 0;
+                        // this.vy = 4;
+                    // }
+                    // if (this.vx || this.vy) {
+                        // var x = this.x + (this.vx ? this.vx / Math.abs(this.vx) * 16 : 0) + 16;
+                        // var y = this.y + (this.vy ? this.vy / Math.abs(this.vy) * 16 : 0) + 16;
+                        // if (0 <= x && x < map.width && 0 <= y && y < map.height && !map.hitTest(x, y)) {
+                            // this.isMoving = true;
+                            // arguments.callee.call(this);
+                        // }
+                    // }
+                // }
+            // });
             
-            
+            var player = new chatrpg.game.PlayerChara(map);
+            player.setImage(game.assets[R.CHARA_0]);
+            player.setName(chatrpg.network.getPlayerInfo().name);
+            player.setPos(6 * 16 - 8, 10 * 16);
+
             var stage = new enchant.Group();
             stage.addChild(map);
             stage.addChild(player);
-            stage.addChild(nameLabel);
+            //stage.addChild(nameLabel);
             stage.addChild(foregroundMap);
-            stage.addChild(messageLabel);
+            //stage.addChild(messageLabel);
+            stage.addChild(player.getOverlayGroup());
             this.getEnchantScene().addChild(stage);
 
             // テキスト入力用のUI を表示させる
@@ -258,8 +263,8 @@
                     var talk = talkInputBox._element.value;
                     talkInputBox._element.value = '';
                     //logTextarea._element.value += talk + '\n';
-                    player.messageLabel.setText(talk);
-                    player.messageLabel.setPos(player.x, player.y);
+                    player.speak(talk);
+                    player.setPos(player.sprite.x, player.sprite.y);
                     chatrpg.network.talk(talk);
                 }
                 this.getEnchantScene().addChild(talkInputBox);
@@ -273,66 +278,15 @@
             }
             
             this.getEnchantScene().addEventListener(enchant.Event.ENTER_FRAME, function(e) {
-                var x = Math.min((game.width  - 16) / 2 - player.x, 0);
-                var y = Math.min((game.height - 16) / 2 - player.y, 0);
+                player.enterFrame(map);
+                var x = Math.min((game.width  - 16) / 2 - player.sprite.x, 0);
+                var y = Math.min((game.height - 16) / 2 - player.sprite.y, 0);
                 x = Math.max(game.width,  x + map.width)  - map.width;
                 y = Math.max(game.height, y + map.height) - map.height;
                 stage.x = x;
                 stage.y = y;
             });
         },
-    });
-    
-    /**
-     * 発言ラベル
-     * @constructor
-     * @extends {enchant.Group} 
-     */
-    MessageLabel = enchant.Class.create(enchant.Group, {
-        initialize: function() {
-            enchant.Group.call(this);
-            this.textWidth = 0;
-            this.rectWidth = 0;
-            this.talkLabel = new enchant.Label(this.talkText);
-            this.talkLabel.color = 'black';
-            this.bgBalloon = new enchant.Sprite(480, 32);
-            this.bgBalloonImage = new enchant.Surface(480, 32);
-            this.bgBalloon.image = this.bgBalloonImage;
-            this.addChild(this.bgBalloon);
-            this.addChild(this.talkLabel);
-        },
-        setText: function(text) {
-            this.talkLabel.text = text;
-            this.textWidth = this.talkLabel._boundWidth;
-            this.rectWidth = Math.max(64, this.textWidth * 1.5);
-            this.bgBalloonImage.clear();
-            this.fillRoundRect_(this.bgBalloonImage.context, 0, 0, this.rectWidth, 24, 8);
-        },
-        setPos: function(x, y) {
-            this.talkLabel.x = x + 16 - this.textWidth / 2;
-            this.talkLabel.y = y - 24;
-            this.bgBalloon.x = x + 16 - this.rectWidth / 2;
-            this.bgBalloon.y = y - 30;
-        },
-        fillRoundRect_: function(ctx, l, t, w, h, r) {
-            var pi = Math.PI;
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-            ctx.beginPath();
-            ctx.arc(l + r, t + r, r, - pi, - 0.5 * pi, false);
-            ctx.arc(l + w - r, t + r, r, - 0.5 * pi, 0, false);
-            ctx.arc(l + w - r, t + h - r, r, 0, 0.5 * pi, false);
-            ctx.arc(l + r, t + h - r, r, 0.5 * pi, pi, false);
-            ctx.closePath();
-            ctx.fill();
-            /* 三角形を描く */
-            ctx.beginPath();
-            ctx.moveTo((l + w) / 2, t + h + 5);
-            ctx.lineTo((l + w) / 2 + 5, t + h);
-            ctx.lineTo((l + w) / 2 - 5, t + h);
-            ctx.closePath();
-            /* 三角形を塗りつぶす */
-            ctx.fill();
-        }
     });
     
     /**
