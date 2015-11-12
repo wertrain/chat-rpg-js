@@ -61,6 +61,7 @@
                         this.isMoving = false;
                         this.walk = 1;
                     }
+                    return true;
                 } else {
                     this.vx = this.vy = 0;
                     if (game.input.left) {
@@ -85,10 +86,11 @@
                         }
                     }
                 }
+                return false;
             };
         },
         enterFrame: function(map) {
-            this.sprite.enterFrame(map);
+            return this.sprite.enterFrame(map);
         },
         setName: function(name) {
             this.setPos(this.sprite.x, this.sprite.y);
@@ -103,6 +105,20 @@
             this.nameLabel.x = x - (this.nameLabel._boundWidth / 2) + 16;
             this.nameLabel.y = y - 2;
             this.messageLabel.setPos(x, y);
+        },
+        getMoveInfo: function() {
+            return { 
+                x: this.sprite.x, y: this.sprite.y,
+                direction: this.sprite.direction,
+                frame: this.sprite.frame,
+                walk: this.sprite.walk
+            };
+        },
+        setMoveInfo: function(moveInfo) {
+            this.setPos(moveInfo.x, moveInfo.y);
+            this.sprite.direction = moveInfo.direction;
+            this.sprite.frame = moveInfo.frame;
+            this.sprite.walk = moveInfo.walk;
         },
         getOverlayGroup: function() {
             return this.overlayGroup;

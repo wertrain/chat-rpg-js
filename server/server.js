@@ -15,22 +15,38 @@
         socket.on('connected', function (name) {
             var player = {
                 name: name,
-                id: socket.id
+                id: socket.id,
+                moveInfo: {}
             };
             socket.emit('connected', player);
             socket.broadcast.emit('join', player);
-            
+            socket.emit('members', players);
+
             players[socket.id] = player;
+            
             var msg = name + '(' + socket.id + ')' + 'が入室しました ';
             console.log(msg);
         });
-        
+        socket.on('disconnect', function () {
+            var player = players[socket.id];
+            
+            if (typeof player !== 'undefined') {
+                socket.broadcast.emit('leave', player);
+                
+                var msg = player.name + '(' + socket.id + ')' + 'が退室しました ';
+                console.log(msg);
+                
+                delete players[socket.id];
+            }
+        });
         socket.on('message', function (message) {
             socket.broadcast.emit('message', message);
             socket.emit('message', message);
-            //console.log(message);
         });
-
+        socket.on('move', function (object) {
+            players[socket.id].moveInfo = object;
+            socket.broadcast.emit('move', object);
+        });
     });
     
     server.listen(8080);

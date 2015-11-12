@@ -210,19 +210,25 @@
                     // }
                 // }
             // });
+            var otherPlayers = [];
             
+            var playerGroup = new enchant.Group();
+            var playerOverlayGroup = new enchant.Group();
+             
             var player = new chatrpg.game.PlayerChara(map);
             player.setImage(game.assets[R.CHARA_0]);
             player.setName(chatrpg.network.getPlayerInfo().name);
             player.setPos(6 * 16 - 8, 10 * 16);
-
+            chatrpg.network.move(player.getMoveInfo());
+            
+            playerGroup.addChild(player);
+            playerOverlayGroup.addChild(player.getOverlayGroup());
+            
             var stage = new enchant.Group();
             stage.addChild(map);
-            stage.addChild(player);
-            //stage.addChild(nameLabel);
+            stage.addChild(playerGroup);
             stage.addChild(foregroundMap);
-            //stage.addChild(messageLabel);
-            stage.addChild(player.getOverlayGroup());
+            stage.addChild(playerOverlayGroup);
             this.getEnchantScene().addChild(stage);
 
             // テキスト入力用のUI を表示させる
@@ -252,7 +258,7 @@
                 logTextarea._element.setAttribute('style','resize: none');
                 logTextarea.opacity = 0.5;
                 logTextarea.backgroundColor = 'rgba(255,255,255,255)';
-                chatrpg.network.setMessageCallback(function(name, message) {
+                chatrpg.network.setEventCallback(chatrpg.network.Event.MESSAGE, function(name, message) {
                     logTextarea._element.value += name + ': ' + message + '\n';
                 });
                 
@@ -277,8 +283,50 @@
                 this.getEnchantScene()._element.style.overflow = 'visible';
             }
             
+            chatrpg.network.setEventCallback(chatrpg.network.Event.JOIN, function(otherPlayer) {
+                var chara = new chatrpg.game.PlayerChara(map);
+                chara.setImage(game.assets[R.CHARA_0]);
+                chara.setName(otherPlayer.name);
+                chara.setPos(6 * 16 - 8, 10 * 16);
+                otherPlayers[otherPlayer.id] = chara;
+                
+                playerGroup.addChild(chara);
+                playerOverlayGroup.addChild(chara.getOverlayGroup());
+            });
+            
+            chatrpg.network.setEventCallback(chatrpg.network.Event.MEMBERS, function(otherPlayers) {
+                console.log(otherPlayers);
+                otherPlayers.forEach(function(otherPlayer) {
+                    var chara = new chatrpg.game.PlayerChara(map);
+                    chara.setImage(game.assets[R.CHARA_0]);
+                    chara.setName(otherPlayer.name);
+                    chara.setPos(otherPlayer.moveInfo.x, otherPlayer.moveInfo.y);
+                    otherPlayers[otherPlayer.id] = chara;
+                    
+                    playerGroup.addChild(chara);
+                    playerOverlayGroup.addChild(chara.getOverlayGroup());
+                });
+            });
+            
+            chatrpg.network.setEventCallback(chatrpg.network.Event.LEAVE, function(otherPlayer) {
+                var chara = otherPlayers[otherPlayer.id]; 
+                
+                if (typeof chara !== 'undefined') {
+                    playerGroup.removeChild(chara);
+                    playerOverlayGroup.removeChild(chara.getOverlayGroup());
+                    delete otherPlayers[otherPlayer.id]; 
+                }
+            });
+            
+            chatrpg.network.setEventCallback(chatrpg.network.Event.MOVE, function(object) {
+                var chara = otherPlayers[object.playerInfo.id];
+                chara.setMoveInfo(object);
+            });
+        
             this.getEnchantScene().addEventListener(enchant.Event.ENTER_FRAME, function(e) {
-                player.enterFrame(map);
+                if (player.enterFrame(map)) {
+                    chatrpg.network.move(player.getMoveInfo());
+                }
                 var x = Math.min((game.width  - 16) / 2 - player.sprite.x, 0);
                 var y = Math.min((game.height - 16) / 2 - player.sprite.y, 0);
                 x = Math.max(game.width,  x + map.width)  - map.width;
