@@ -258,8 +258,14 @@
                 logTextarea._element.setAttribute('style','resize: none');
                 logTextarea.opacity = 0.5;
                 logTextarea.backgroundColor = 'rgba(255,255,255,255)';
-                chatrpg.network.setEventCallback(chatrpg.network.Event.MESSAGE, function(name, message) {
+                chatrpg.network.setEventCallback(chatrpg.network.Event.MESSAGE, function(name, message, id) {
                     logTextarea._element.value += name + ': ' + message + '\n';
+                    
+                    var chara = otherPlayers[id]; 
+                    if (typeof chara !== 'undefined') {
+                        chara.speak(message);
+                        chara.setPos(chara.sprite.x, chara.sprite.y);
+                    }
                 });
                 
                 var talkButton = new enchant.ui.Button('TALK');
@@ -294,18 +300,15 @@
                 playerOverlayGroup.addChild(chara.getOverlayGroup());
             });
             
-            chatrpg.network.setEventCallback(chatrpg.network.Event.MEMBERS, function(otherPlayers) {
-                console.log(otherPlayers);
-                otherPlayers.forEach(function(otherPlayer) {
-                    var chara = new chatrpg.game.PlayerChara(map);
-                    chara.setImage(game.assets[R.CHARA_0]);
-                    chara.setName(otherPlayer.name);
-                    chara.setPos(otherPlayer.moveInfo.x, otherPlayer.moveInfo.y);
-                    otherPlayers[otherPlayer.id] = chara;
-                    
-                    playerGroup.addChild(chara);
-                    playerOverlayGroup.addChild(chara.getOverlayGroup());
-                });
+            chatrpg.network.setEventCallback(chatrpg.network.Event.MEMBERS, function(otherPlayer) {
+                var chara = new chatrpg.game.PlayerChara(map);
+                chara.setImage(game.assets[R.CHARA_0]);
+                chara.setName(otherPlayer.name);
+                chara.setPos(otherPlayer.moveInfo.x, otherPlayer.moveInfo.y);
+                otherPlayers[otherPlayer.id] = chara;
+                
+                playerGroup.addChild(chara);
+                playerOverlayGroup.addChild(chara.getOverlayGroup());
             });
             
             chatrpg.network.setEventCallback(chatrpg.network.Event.LEAVE, function(otherPlayer) {
@@ -320,7 +323,9 @@
             
             chatrpg.network.setEventCallback(chatrpg.network.Event.MOVE, function(object) {
                 var chara = otherPlayers[object.playerInfo.id];
-                chara.setMoveInfo(object);
+                if (typeof chara !== 'undefined') {
+                    chara.setMoveInfo(object);
+                }
             });
         
             this.getEnchantScene().addEventListener(enchant.Event.ENTER_FRAME, function(e) {

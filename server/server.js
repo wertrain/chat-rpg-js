@@ -20,7 +20,9 @@
             };
             socket.emit('connected', player);
             socket.broadcast.emit('join', player);
-            socket.emit('members', players);
+            for (var i in players) {
+                socket.emit('members', players[i]);
+            }
 
             players[socket.id] = player;
             
@@ -49,5 +51,5 @@
         });
     });
     
-    server.listen(8080);
+    server.listen(process.env.PORT || 8080);
 })();
