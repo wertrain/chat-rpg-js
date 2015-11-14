@@ -3,8 +3,14 @@
  */
 (function(namespace) {
     var port = 8080;
-    var socketio = io.connect('/', { port: port });
-    //var socketio = io.connect('http://localhost:8080');
+    var socketio = null;
+    // heroku 上か確認したいがいい方法が見つからず
+    if (typeof process === 'undefined') {
+        socketio = io.connect('http://localhost:8080');
+    } else {
+        socketio = io.connect('/', { port: port });
+    }
+
     var playerInfo = {
         name: '', id: ''
     };
