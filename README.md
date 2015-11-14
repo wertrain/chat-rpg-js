@@ -1,6 +1,6 @@
 # chat-rpg-js
 
-[https://chatrpg-js.herokuapp.com/](https://chatrpg-js.herokuapp.com/)
+[https://chat-rpg.herokuapp.com/](https://chat-rpg.herokuapp.com/)
 
 ### Client
 
